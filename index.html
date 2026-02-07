@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine?</title>
+  <style>
+    body{
+      margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #ffe6ee, #fff7d6);
+    }
+    .card{
+      width:min(520px, 92vw);
+      background:#fff; padding:28px; border-radius:20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.12);
+      text-align:center;
+    }
+    h1{ margin:0 0 8px; font-size:28px; }
+    p{ margin:0 0 18px; color:#444; }
+    .buttons{ position:relative; height:110px; } /* a bit taller for smoother dodging */
+    button{
+      border:none; border-radius:14px;
+      cursor:pointer; font-weight:700;
+    }
+
+    /* BIGGER YES button */
+    #yes{
+      background:#ff4d7d;
+      color:white;
+      margin-right:12px;
+      font-size:22px;
+      padding:18px 30px;
+      transform: scale(1.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 20px rgba(255,77,125,0.45);
+    }
+    #yes:hover{ transform: scale(1.25); }
+
+    /* NO button */
+    #no{
+      background:#f2f2f2; color:#333;
+      padding:14px 22px;
+      font-size:18px;
+      position:absolute; left:55%; top:12px;
+    }
+
+    .result{ margin-top:14px; font-size:18px; font-weight:700; }
+
+    .gif{
+      width:220px;
+      border-radius:16px;
+      margin-bottom:12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="love.gif" alt="Cute Valentine Gif" class="gif" />
+
+    <h1>Will you be my Valentine Glozy? 💖</h1>
+    <p>Choose wisely 😌</p>
+
+    <div class="buttons" id="arena">
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const arena = document.getElementById("arena");
+    const result = document.getElementById("result");
+
+    function moveNoButton() {
+      const arenaRect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxX = arenaRect.width - btnRect.width;
+      const maxY = arenaRect.height - btnRect.height;
+
+      noBtn.style.transition = "left 0.08s linear, top 0.08s linear";
+      noBtn.style.left = `${Math.random() * maxX}px`;
+      noBtn.style.top  = `${Math.random() * maxY}px`;
+    }
+
+    // Run away BEFORE the cursor reaches it
+    arena.addEventListener("mousemove", (e) => {
+      const r = noBtn.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+
+      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+
+      // bigger number = runs away sooner
+      if (dist < 140) moveNoButton();
+    });
+
+    // Phones/tablets
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    let saidYes = false;
+
+    yesBtn.addEventListener("click", () => {
+      if (!saidYes) {
+        saidYes = true;
+
+        result.textContent = "Yay!! 💖 I knew it 😍";
+        yesBtn.textContent = "Best Valentine Ever 💘";
+        noBtn.style.display = "none";
+
+        // Make the YES feel even more "winning"
+        yesBtn.style.transform = "scale(1.35)";
+
+        // Celebration gif
+        const gif = document.querySelector(".gif");
+        if (gif) {
+          gif.src = "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif";
+        }
+        return;
+      }
+
+      // Second click → WhatsApp
+      window.open(
+        "https://wa.me/16132130789?text=I%20said%20YES%20Valentine%20%F0%9F%92%96",
+        "_blank"
+      );
+    });
+  </script>
+</body>
+</html>
